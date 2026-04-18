@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
 	"runtime"
@@ -15,34 +14,6 @@ type UnaryFunction func(float64) float64
 
 func randomfloat(min, max float64) float64 {
 	return min + rand.Float64()*(max-min)
-}
-
-// UnaryMonteCarloIntegration approximates the integral of a unaryfunction on the range of a to b by using a number n of random points
-// Input: UnaryFunction, min, max, iterations, mode of calculation
-// Output: Intergral, Stanadard Error, Seconds to calculate
-func UnaryMonteCarloIntegration(f UnaryFunction, a, b float64, n int, mode string) (float64, float64, float64) {
-	var sum, sum_squared float64
-	watch := stopwatch.Start()
-	if mode == "multi-threaded" {
-		sum, sum_squared = ParallelMonteCarlo(f, a, b, n)
-	} else {
-		sum, sum_squared = MonteCarlo(f, a, b, n)
-	}
-
-	// calculate integral estimate
-	mean := sum / float64(n)
-	integral := (b - a) * mean
-
-	// calculate variance and standard deviation required for precision calculation
-	// variance formula: E[X^2] - (E[X])^2
-	variance := (sum_squared / float64(n)) - (math.Pow(mean, 2))
-	standard_deviation := math.Sqrt(variance)
-
-	standard_error := (b - a) * (standard_deviation / math.Sqrt(float64(n)))
-
-	watch.Stop()
-
-	return integral, standard_error, float64(watch.Milliseconds())
 }
 
 // MonteCarlo approximates the integral of a unaryfunction on the range of a to b by using a number n of random points
@@ -181,26 +152,30 @@ func UnaryMISERMonteCarlo(f UnaryFunction, a, b float64, n, d int) (float64, flo
 	return finalIntegral, standard_error
 }
 
-// helper function used to print out each series of monte-carlo tests
-func PrintTest(f UnaryFunction, a, b float64, n int) {
-
-	fmt.Printf("\n	Single-Threaded Monte Carlo Integration")
-	integral, errorval, time := UnaryMonteCarloIntegration(f, a, b, n, "single-threaded")
-	fmt.Printf("\n		Integral %f", integral)
-	fmt.Printf("\n		Error value %f", errorval)
-	fmt.Printf("\n		Time Elapsed %f milliseconds", time)
-
-	fmt.Printf("\n\n	Multi-Threaded Monte Carlo Integration")
-	integral, errorval, time = UnaryMonteCarloIntegration(f, a, b, n, "multi-threaded")
-	fmt.Printf("\n		Integral %f", integral)
-	fmt.Printf("\n		Error value %f", errorval)
-	fmt.Printf("\n		Time Elapsed %f milliseconds", time)
-
-	fmt.Printf("\n\n	MISERMonteCarlo")
+// UnaryMonteCarloIntegration approximates the integral of a unaryfunction on the range of a to b by using a number n of random points
+// Input: UnaryFunction, min, max, iterations, mode of calculation
+// Output: Intergral, Stanadard Error, Seconds to calculate
+func UnaryMonteCarloIntegration(f UnaryFunction, a, b float64, n int, mode string) (float64, float64, float64) {
+	var sum, sum_squared float64
 	watch := stopwatch.Start()
-	integral_MISER, errorval_MISER := UnaryMISERMonteCarlo(f, a, b, n, 3)
+	if mode == "multi-threaded" {
+		sum, sum_squared = ParallelMonteCarlo(f, a, b, n)
+	} else {
+		sum, sum_squared = MonteCarlo(f, a, b, n)
+	}
+
+	// calculate integral estimate
+	mean := sum / float64(n)
+	integral := (b - a) * mean
+
+	// calculate variance and standard deviation required for precision calculation
+	// variance formula: E[X^2] - (E[X])^2
+	variance := (sum_squared / float64(n)) - (math.Pow(mean, 2))
+	standard_deviation := math.Sqrt(variance)
+
+	standard_error := (b - a) * (standard_deviation / math.Sqrt(float64(n)))
+
 	watch.Stop()
-	fmt.Printf("\n		Integral %f", integral_MISER)
-	fmt.Printf("\n		Error value %f", errorval_MISER)
-	fmt.Printf("\n		Time Elapsed %f milliseconds", float64(watch.Milliseconds()))
+
+	return integral, standard_error, float64(watch.Milliseconds())
 }

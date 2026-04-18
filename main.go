@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"math"
 	"numerical-analysis-final-project/internal"
-
-	"github.com/bradhe/stopwatch"
 )
 
 func main() {
@@ -30,32 +28,15 @@ func main() {
 	fmt.Println("      Test 1: Area of circle with radius 1      ")
 	fmt.Println("------------------------------------------------")
 	fmt.Println("EXPECTED INTEGRAL: 3.1415926")
-
 	r := 1.0
-	var g internal.UnaryFunction = func(x float64) float64 { return math.Sqrt(math.Pow(r, 2) - math.Pow(x, 2)) }
+	internal.PrintTestCircle(f, r, n)
 
-	fmt.Printf("\n	Single-Threaded Monte Carlo Integration")
-	integral, errorval, time := internal.UnaryMonteCarloIntegration(g, -r, r, n, "single-threaded")
-	fmt.Printf("\n		Integral %f", 2*integral)
-	fmt.Printf("\n		Error value %f", 2*errorval)
-	fmt.Printf("\n		Time Elapsed %f milliseconds", time)
+	// Test 3: Multi varible integration
+	fmt.Print("\n\n\n")
+	fmt.Println("------------------------------------------------")
+	fmt.Println("      Test 2: Area of sphere with radius 1      ")
+	fmt.Println("------------------------------------------------")
+	internal.PrintTestSphere(1)
 
-	fmt.Printf("\n\n	Multi-Threaded Monte Carlo Integration")
-	integral, errorval, time = internal.UnaryMonteCarloIntegration(g, -r, r, n, "multi-threaded")
-	fmt.Printf("\n		Integral %f", 2*integral)
-	fmt.Printf("\n		Error value %f", 2*errorval)
-	fmt.Printf("\n		Time Elapsed %f milliseconds", time)
-
-	fmt.Printf("\n\n	MISERMonteCarlo")
-	watch := stopwatch.Start()
-	integral_MISER, errorval_MISER := internal.UnaryMISERMonteCarlo(g, -r, r, n, 3)
-	watch.Stop()
-	fmt.Printf("\n		Integral %f", 2*integral_MISER)
-	fmt.Printf("\n		Error value %f", 2*errorval_MISER)
-	fmt.Printf("\n		Time Elapsed %f milliseconds", float64(watch.Milliseconds()))
-
-	// Test 2: Integration of e^x over [0,1]
-
-	// Test 3: neutron transport equation
-	fmt.Print("\n\n\n") // for readability
+	fmt.Print("\n\n\n")
 }
