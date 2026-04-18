@@ -1,6 +1,0 @@
-package internal
-
-func MonteCarloIntegration() {
-
-}
-
