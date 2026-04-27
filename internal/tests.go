@@ -97,3 +97,36 @@ func PrintTestSphere(radius float64) {
 	fmt.Printf("\n		Standard Error:   %.6f", err)
 	fmt.Printf("\n		Time Elapsed:     %.2f ms", float64(watch.Milliseconds()))
 }
+
+func PrintTest20DObject() {
+	// Define 20D bounds for a hypercube from -1 to 1 in each dimension
+	dims := 20
+	bounds := Bounds{
+		Min: make([]float64, dims),
+		Max: make([]float64, dims),
+	}
+	for i := range dims {
+		bounds.Min[i] = -1.0
+		bounds.Max[i] = 1.0
+	}
+
+	hypercubeFunc := func(p []float64) float64 {
+		// All points in the hypercube are "inside"
+		return 1.0
+	}
+
+	n := 10000000 // 10 million samples
+	fmt.Printf("   EXPECTED VOLUME: %.6f\n", math.Pow(2, float64(dims)))
+	volume, err, ms := MultiMonteCarloIntegration(hypercubeFunc, bounds, n)
+	fmt.Printf("   Estimated Volume: %.6f\n", volume)
+	fmt.Printf("   Standard Error:   %.6f\n", err)
+	fmt.Printf("   Time Elapsed:     %.2f ms\n", ms)
+
+	fmt.Println("\n\n   MultiMISERMonteCarloIntegration Test")
+	watch := stopwatch.Start()
+	volume, err = MultiMISERMonteCarloIntegration(hypercubeFunc, bounds, n, 5)
+	watch.Stop()
+	fmt.Printf("   Estimated Volume: %.6f\n", volume)
+	fmt.Printf("   Standard Error:   %.6f\n", err)
+	fmt.Printf("   Time Elapsed:     %.2f ms\n", float64(watch.Milliseconds()))
+}

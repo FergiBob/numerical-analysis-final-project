@@ -17,12 +17,14 @@ func main() {
 	a := 0.0
 	b := 2.0
 
+	// Test 0: f(x) = x^2
 	fmt.Println("------------------------------------------------")
 	fmt.Println("                Test 0: f(x) = x^2              ")
 	fmt.Println("------------------------------------------------")
 	fmt.Println("EXPECTED INTEGRAL: 2.666666666666666")
 	internal.PrintTest(f, a, b, n)
 
+	// Test 1: Area of circle with radius 1
 	fmt.Print("\n\n\n")
 	fmt.Println("------------------------------------------------")
 	fmt.Println("      Test 1: Area of circle with radius 1      ")
@@ -31,7 +33,7 @@ func main() {
 	r := 1.0
 	internal.PrintTestCircle(f, r, n)
 
-	// Test 3: Multi varible integration
+	// Test 2: Multi varible integration
 	fmt.Print("\n\n\n")
 	fmt.Println("------------------------------------------------")
 	fmt.Println("      Test 2: Area of sphere with radius 1      ")
@@ -39,4 +41,9 @@ func main() {
 	internal.PrintTestSphere(1)
 
 	fmt.Print("\n\n\n")
+	// Test 3: Multi-dimensional integration
+	fmt.Println("------------------------------------------------")
+	fmt.Println("      Test 3: 20D Hypercube Volume              ")
+	fmt.Println("------------------------------------------------")
+	internal.PrintTest20DObject()
 }
